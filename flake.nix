@@ -1,5 +1,5 @@
 {
-  description = "A devShell example";
+  description = "Rust devShell with stable rust-analyzer support";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -9,6 +9,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       rust-overlay,
       flake-utils,
@@ -21,24 +22,31 @@
         pkgs = import nixpkgs {
           inherit system overlays;
         };
+
+        rust = pkgs.rust-bin.stable.latest.default.override {
+          extensions = [ "rust-src" ];
+        };
+
+        rustAnalyzer = pkgs.rust-bin.stable.latest.rust-analyzer;
+
       in
       {
-        devShells.default =
-          with pkgs;
-          mkShell {
-            buildInputs = [
-              openssl
-              pkg-config
-              eza
-              fd
-              rust-bin.beta.latest.default
-            ];
+        devShells.default = pkgs.mkShell {
+          buildInputs = [
+            rust
+            rustAnalyzer
+            pkgs.openssl
+            pkgs.pkg-config
+            pkgs.eza
+            pkgs.fd
+          ];
 
-            shellHook = ''
-              alias ls=eza
-              alias find=fd
-            '';
-          };
+          shellHook = ''
+            alias ls=eza
+            alias find=fd
+            export RUST_SRC_PATH="${rust}/lib/rustlib/src/rust/library"
+          '';
+        };
       }
     );
 }

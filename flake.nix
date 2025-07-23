@@ -1,5 +1,5 @@
 {
-  description = "Rust devShell with stable rust-analyzer support";
+  description = "Rust devShell with stable rust-analyzer support and Fish shell";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -9,7 +9,6 @@
 
   outputs =
     {
-      self,
       nixpkgs,
       rust-overlay,
       flake-utils,
@@ -39,12 +38,15 @@
             pkgs.pkg-config
             pkgs.eza
             pkgs.fd
+            pkgs.fish
           ];
 
           shellHook = ''
+            export SHELL=${pkgs.fish}/bin/fish
             alias ls=eza
             alias find=fd
             export RUST_SRC_PATH="${rust}/lib/rustlib/src/rust/library"
+            exec ${pkgs.fish}/bin/fish
           '';
         };
       }

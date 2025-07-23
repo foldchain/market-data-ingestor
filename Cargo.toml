@@ -1,10 +1,12 @@
 [package]
-name = "market-data-ingestor"
+name = "hftsandbox-ingestor"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 anyhow = "1.0.98"
+async-trait = "0.1.88"
+erased-serde = "0.4.6"
 futures = "0.3.31"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"

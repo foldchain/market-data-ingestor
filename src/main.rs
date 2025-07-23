@@ -1,18 +1,22 @@
-mod binance;
-mod domain;
-mod pipeline;
+use std::sync::Arc;
 
-use crate::binance::ws::connect_binance;
-use crate::pipeline::dispatcher::create_channel;
+use crate::market::Market;
+use crate::market::binance::BinanceMarket;
+use crate::publisher::console_publisher::ConsolePublisher;
+
+mod domain;
+mod market;
+mod publisher;
+mod utils;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();
 
-    let tx = create_channel();
+    let tx = ConsolePublisher;
 
     let handle = tokio::spawn(async move {
-        if let Err(e) = connect_binance("btcusdt", tx).await {
+        if let Err(e) = BinanceMarket::connect("btcusdt", Arc::new(tx)).await {
             eprintln!("Error: {:?}", e);
         }
     });
@@ -20,4 +24,3 @@ async fn main() -> anyhow::Result<()> {
     handle.await?;
     Ok(())
 }
-

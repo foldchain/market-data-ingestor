@@ -1,1 +1,2 @@
-pub mod market_event;
+pub mod event;
+pub mod trade_event;
